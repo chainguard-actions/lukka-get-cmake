@@ -9,6 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
 | v4.2.3 | [`v4.2.3`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.2.3) | [`f176ccd`](https://github.com/lukka/get-cmake/commit/f176ccd3f28bda569c43aae4894f06b2435a3375) |
+| v4.3.1 | [`v4.3.1`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.1) | [`ea83089`](https://github.com/lukka/get-cmake/commit/ea83089aa35e08e459464341fe24ad024ee2466f) |
 | v4.3.2 | [`v4.3.2`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.2) | [`7bfc9ba`](https://github.com/lukka/get-cmake/commit/7bfc9baacbbdcb5e37957ad05c3546b3e222be3c) |
 
 ## Privacy
