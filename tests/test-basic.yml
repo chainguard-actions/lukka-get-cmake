@@ -1,0 +1,41 @@
+name: Test basic usage (latest cmake and ninja)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: get-cmake
+        uses: .
+        with:
+          useCloudCache: false
+          useLocalCache: false
+      - name: Assert cmake-path output is set
+        env:
+          CMAKE_PATH: ${{ steps.get-cmake.outputs.cmake-path }}
+        run: |
+          echo "cmake-path: $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path output is empty"
+            exit 1
+          fi
+          echo "PASS: cmake-path is set to $CMAKE_PATH"
+      - name: Assert ninja-path output is set
+        env:
+          NINJA_PATH: ${{ steps.get-cmake.outputs.ninja-path }}
+        run: |
+          echo "ninja-path: $NINJA_PATH"
+          if [ -z "$NINJA_PATH" ]; then
+            echo "FAIL: ninja-path output is empty"
+            exit 1
+          fi
+          echo "PASS: ninja-path is set to $NINJA_PATH"
+      - name: Assert cmake executable works
+        run: |
+          cmake --version
+          echo "PASS: cmake is executable"
+      - name: Assert ninja executable works
+        run: |
+          ninja --version
+          echo "PASS: ninja is executable"
