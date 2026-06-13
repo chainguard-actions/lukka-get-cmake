@@ -1,0 +1,36 @@
+name: Test specific cmakeVersion input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: get-cmake
+        uses: .
+        with:
+          cmakeVersion: "3.28.0"
+          useCloudCache: false
+          useLocalCache: false
+      - name: Assert cmake-path output is set
+        env:
+          CMAKE_PATH: ${{ steps.get-cmake.outputs.cmake-path }}
+        run: |
+          echo "cmake-path: $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path output is empty"
+            exit 1
+          fi
+          echo "PASS: cmake-path=$CMAKE_PATH"
+      - name: Assert cmake version is 3.28.0
+        env:
+          CMAKE_PATH: ${{ steps.get-cmake.outputs.cmake-path }}
+        run: |
+          echo "Testing cmake version at: $CMAKE_PATH"
+          VERSION=$("$CMAKE_PATH" --version | head -1 | awk '{print $3}')
+          echo "Installed cmake version: $VERSION"
+          if [ "$VERSION" != "3.28.0" ]; then
+            echo "FAIL: expected cmake version 3.28.0, got $VERSION"
+            exit 1
+          fi
+          echo "PASS"
