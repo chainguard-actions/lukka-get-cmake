@@ -1,0 +1,66 @@
+name: Test local cache mode
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      RUNNER_TEMP: /tmp/runner-temp
+      RUNNER_TOOL_CACHE: /tmp/runner-tool-cache
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Prepare runner temp dirs
+        run: |
+          mkdir -p /tmp/runner-temp
+          mkdir -p /tmp/runner-tool-cache
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: 3.26.4
+          ninjaVersion: 1.11.1
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert cmake-path output is set
+        env:
+          CMAKE_PATH: ${{ steps.action.outputs.cmake-path }}
+        run: |
+          echo "cmake-path: $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path output is empty"
+            exit 1
+          fi
+          echo "PASS: cmake-path is set"
+      - name: Assert ninja-path output is set
+        env:
+          NINJA_PATH: ${{ steps.action.outputs.ninja-path }}
+        run: |
+          echo "ninja-path: $NINJA_PATH"
+          if [ -z "$NINJA_PATH" ]; then
+            echo "FAIL: ninja-path output is empty"
+            exit 1
+          fi
+          echo "PASS: ninja-path is set"
+      - name: Assert cmake is functional
+        run: |
+          cmake --version
+          echo "PASS: cmake is functional"
+      - name: Assert ninja is functional
+        run: |
+          ninja --version
+          echo "PASS: ninja is functional"
+      - name: Run action again to exercise local cache hit
+        id: action-cached
+        uses: .
+        with:
+          cmakeVersion: 3.26.4
+          ninjaVersion: 1.11.1
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert cmake still works after cache hit
+        run: |
+          cmake --version
+          echo "PASS: cmake works after local cache hit"
+      - name: Assert ninja still works after cache hit
+        run: |
+          ninja --version
+          echo "PASS: ninja works after local cache hit"

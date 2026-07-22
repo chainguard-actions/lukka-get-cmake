@@ -1,0 +1,71 @@
+name: Test basic usage - latest cmake and ninja
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      RUNNER_TEMP: /tmp/runner-temp
+      RUNNER_TOOL_CACHE: /tmp/runner-tool-cache
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Prepare runner temp dirs
+        run: |
+          mkdir -p /tmp/runner-temp
+          mkdir -p /tmp/runner-tool-cache
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: latest
+          ninjaVersion: latest
+          useCloudCache: false
+          useLocalCache: false
+      - name: Assert cmake-path output is set
+        env:
+          CMAKE_PATH: ${{ steps.action.outputs.cmake-path }}
+        run: |
+          echo "cmake-path: $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path output is empty"
+            exit 1
+          fi
+          echo "PASS: cmake-path is set"
+      - name: Assert ninja-path output is set
+        env:
+          NINJA_PATH: ${{ steps.action.outputs.ninja-path }}
+        run: |
+          echo "ninja-path: $NINJA_PATH"
+          if [ -z "$NINJA_PATH" ]; then
+            echo "FAIL: ninja-path output is empty"
+            exit 1
+          fi
+          echo "PASS: ninja-path is set"
+      - name: Assert cmake is executable and reports version
+        env:
+          CMAKE_PATH: ${{ steps.action.outputs.cmake-path }}
+        run: |
+          echo "Running cmake at: $CMAKE_PATH"
+          if [ ! -x "$CMAKE_PATH/cmake" ] && [ ! -x "$CMAKE_PATH" ]; then
+            # Try finding cmake in the path directory
+            CMAKE_BIN=$(find "$CMAKE_PATH" -name "cmake" -type f 2>/dev/null | head -1 || true)
+            if [ -z "$CMAKE_BIN" ]; then
+              CMAKE_BIN="$CMAKE_PATH/cmake"
+            fi
+            echo "Trying cmake at: $CMAKE_BIN"
+          fi
+          cmake --version
+          echo "PASS: cmake is executable"
+      - name: Assert ninja is executable and reports version
+        run: |
+          ninja --version
+          echo "PASS: ninja is executable"
+      - name: Assert cmake is on PATH
+        run: |
+          which cmake
+          cmake --version
+          echo "PASS: cmake is on PATH"
+      - name: Assert ninja is on PATH
+        run: |
+          which ninja
+          ninja --version
+          echo "PASS: ninja is on PATH"

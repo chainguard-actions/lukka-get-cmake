@@ -1,0 +1,64 @@
+name: Test semver range version syntax
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      RUNNER_TEMP: /tmp/runner-temp
+      RUNNER_TOOL_CACHE: /tmp/runner-tool-cache
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Prepare runner temp dirs
+        run: |
+          mkdir -p /tmp/runner-temp
+          mkdir -p /tmp/runner-tool-cache
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: "~3.25.0"
+          ninjaVersion: "^1.11.0"
+          useCloudCache: false
+          useLocalCache: false
+      - name: Assert cmake-path output is set
+        env:
+          CMAKE_PATH: ${{ steps.action.outputs.cmake-path }}
+        run: |
+          echo "cmake-path: $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path output is empty"
+            exit 1
+          fi
+          echo "PASS: cmake-path is set"
+      - name: Assert ninja-path output is set
+        env:
+          NINJA_PATH: ${{ steps.action.outputs.ninja-path }}
+        run: |
+          echo "ninja-path: $NINJA_PATH"
+          if [ -z "$NINJA_PATH" ]; then
+            echo "FAIL: ninja-path output is empty"
+            exit 1
+          fi
+          echo "PASS: ninja-path is set"
+      - name: Assert cmake version is in 3.25.x range
+        run: |
+          VERSION=$(cmake --version | head -1 | awk '{print $3}')
+          echo "cmake version: $VERSION"
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          if [ "$MAJOR" != "3" ] || [ "$MINOR" != "25" ]; then
+            echo "FAIL: expected cmake version 3.25.x but got $VERSION"
+            exit 1
+          fi
+          echo "PASS: cmake version $VERSION is in 3.25.x range"
+      - name: Assert ninja version is at least 1.11.0
+        run: |
+          VERSION=$(ninja --version)
+          echo "ninja version: $VERSION"
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          if [ "$MAJOR" -lt "1" ] || { [ "$MAJOR" -eq "1" ] && [ "$MINOR" -lt "11" ]; }; then
+            echo "FAIL: expected ninja version >= 1.11.0 but got $VERSION"
+            exit 1
+          fi
+          echo "PASS: ninja version $VERSION satisfies ^1.11.0"
