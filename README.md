@@ -14,6 +14,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | v4.3.2 | [`v4.3.2`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.2) | [`7bfc9ba`](https://github.com/lukka/get-cmake/commit/7bfc9baacbbdcb5e37957ad05c3546b3e222be3c) |
 | v4.3.3 | [`v4.3.3`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.3) | [`591817e`](https://github.com/lukka/get-cmake/commit/591817e96fcad43505fb4eae36172462abb3a42e) |
 | v4.4.0 | [`v4.4.0`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.4.0) | [`e690607`](https://github.com/lukka/get-cmake/commit/e6906078ebd1ccb8ce51ab4626ac46a1b5a517e3) |
+| v4.4.2 | [`v4.4.2`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.4.2) | [`fffaaaf`](https://github.com/lukka/get-cmake/commit/fffaaafeea488556c2c12dad60690008bc1caacb) |
 
 ## Privacy
 
