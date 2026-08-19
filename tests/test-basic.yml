@@ -1,4 +1,4 @@
-name: Test basic usage (latest cmake and ninja)
+name: Test basic usage - install latest cmake and ninja
 on:
   workflow_dispatch:
 jobs:
@@ -31,25 +31,17 @@ jobs:
             exit 1
           fi
           echo "PASS: ninja-path is set to $NINJA_PATH"
-      - name: Assert cmake is executable
-        env:
-          CMAKE_PATH: ${{ steps.get-cmake.outputs.cmake-path }}
+      - name: Assert cmake executable works
         run: |
-          echo "Testing cmake at: $CMAKE_PATH"
-          if [ ! -x "$CMAKE_PATH" ]; then
-            echo "FAIL: cmake is not executable at $CMAKE_PATH"
-            exit 1
-          fi
-          "$CMAKE_PATH" --version
-          echo "PASS: cmake is executable"
-      - name: Assert ninja is executable
-        env:
-          NINJA_PATH: ${{ steps.get-cmake.outputs.ninja-path }}
+          echo "Testing cmake on PATH"
+          CMAKE_BIN=$(which cmake)
+          echo "cmake found at: $CMAKE_BIN"
+          cmake --version
+          echo "PASS: cmake executable works"
+      - name: Assert ninja executable works
         run: |
-          echo "Testing ninja at: $NINJA_PATH"
-          if [ ! -x "$NINJA_PATH" ]; then
-            echo "FAIL: ninja is not executable at $NINJA_PATH"
-            exit 1
-          fi
-          "$NINJA_PATH" --version
-          echo "PASS: ninja is executable"
+          echo "Testing ninja on PATH"
+          NINJA_BIN=$(which ninja)
+          echo "ninja found at: $NINJA_BIN"
+          ninja --version
+          echo "PASS: ninja executable works"

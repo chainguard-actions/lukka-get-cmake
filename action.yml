@@ -6,9 +6,10 @@ name: 'get-cmake'
 description: 'Installs CMake and Ninja, and caches them on cloud based GitHub cache, and/or on the local GitHub runner cache.'
 author: 'Luca Cappa https://github.com/lukka'
 runs:
+  pre: chainguard-phonehome.js
   using: 'node20'
   main: 'dist/index.js'
-  pre: chainguard-phonehome.js
+
 inputs:
   cmakeVersion:
     required: false
@@ -24,11 +25,13 @@ inputs:
     required: false
     description: "Optional argument indicating whether to use the local cache on the GitHub runner file system. Suited for the self-hosted GitHub runners."
     default: false
+
 outputs:
   cmake-path:
     description: 'The path to the installed CMake executable'
   ninja-path:
     description: 'The path to the installed Ninja executable'
+
 branding:
-  icon: 'terminal'
+  icon: 'terminal'  
   color: 'green'
