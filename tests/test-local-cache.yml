@@ -1,0 +1,62 @@
+name: Test local cache usage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      # First install - populates local cache
+      - id: get-cmake-first
+        uses: .
+        with:
+          cmakeVersion: '3.27.0'
+          ninjaVersion: '1.11.1'
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert first install cmake-path is set
+        env:
+          CMAKE_PATH: ${{ steps.get-cmake-first.outputs.cmake-path }}
+        run: |
+          echo "cmake-path (first): $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path output is empty on first install"
+            exit 1
+          fi
+          echo "PASS: cmake-path is set on first install"
+      - name: Assert first install cmake works
+        run: |
+          VERSION=$(cmake --version | head -1)
+          echo "cmake version: $VERSION"
+          if ! echo "$VERSION" | grep -q "3.27.0"; then
+            echo "FAIL: expected cmake 3.27.0 but got: $VERSION"
+            exit 1
+          fi
+          echo "PASS: cmake 3.27.0 installed correctly"
+      # Second install - should use local cache
+      - id: get-cmake-second
+        uses: .
+        with:
+          cmakeVersion: '3.27.0'
+          ninjaVersion: '1.11.1'
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert second install cmake-path is set (from cache)
+        env:
+          CMAKE_PATH: ${{ steps.get-cmake-second.outputs.cmake-path }}
+        run: |
+          echo "cmake-path (second/cached): $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path output is empty on second install"
+            exit 1
+          fi
+          echo "PASS: cmake-path is set on second install (from cache)"
+      - name: Assert second install cmake works (from cache)
+        run: |
+          VERSION=$(cmake --version | head -1)
+          echo "cmake version (cached): $VERSION"
+          if ! echo "$VERSION" | grep -q "3.27.0"; then
+            echo "FAIL: expected cmake 3.27.0 from cache but got: $VERSION"
+            exit 1
+          fi
+          echo "PASS: cmake 3.27.0 served correctly from local cache"

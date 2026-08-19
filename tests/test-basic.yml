@@ -1,4 +1,4 @@
-name: Test basic usage (latest cmake and ninja)
+name: Test basic usage - latest cmake and ninja
 on:
   workflow_dispatch:
 jobs:
@@ -31,25 +31,47 @@ jobs:
             exit 1
           fi
           echo "PASS: ninja-path is set to $NINJA_PATH"
-      - name: Assert cmake is executable
+      - name: Assert cmake is on PATH and functional
+        run: |
+          echo "Checking cmake on PATH..."
+          which cmake || { echo "FAIL: cmake not found on PATH"; exit 1; }
+          cmake --version
+          echo "PASS: cmake is functional"
+      - name: Assert ninja is on PATH and functional
+        run: |
+          echo "Checking ninja on PATH..."
+          which ninja || { echo "FAIL: ninja not found on PATH"; exit 1; }
+          ninja --version
+          echo "PASS: ninja is functional"
+      - name: Assert cmake binary exists in cmake-path directory
         env:
           CMAKE_PATH: ${{ steps.get-cmake.outputs.cmake-path }}
         run: |
-          echo "Testing cmake at: $CMAKE_PATH"
-          if [ ! -x "$CMAKE_PATH" ]; then
-            echo "FAIL: cmake is not executable at $CMAKE_PATH"
+          echo "cmake-path directory: $CMAKE_PATH"
+          if [ ! -d "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path is not a directory"
             exit 1
           fi
-          "$CMAKE_PATH" --version
-          echo "PASS: cmake is executable"
-      - name: Assert ninja is executable
+          if [ ! -f "$CMAKE_PATH/cmake" ]; then
+            echo "FAIL: cmake binary not found in $CMAKE_PATH"
+            ls -la "$CMAKE_PATH" || true
+            exit 1
+          fi
+          "$CMAKE_PATH/cmake" --version
+          echo "PASS: cmake binary found and functional in cmake-path directory"
+      - name: Assert ninja binary exists in ninja-path directory
         env:
           NINJA_PATH: ${{ steps.get-cmake.outputs.ninja-path }}
         run: |
-          echo "Testing ninja at: $NINJA_PATH"
-          if [ ! -x "$NINJA_PATH" ]; then
-            echo "FAIL: ninja is not executable at $NINJA_PATH"
+          echo "ninja-path directory: $NINJA_PATH"
+          if [ ! -d "$NINJA_PATH" ]; then
+            echo "FAIL: ninja-path is not a directory"
             exit 1
           fi
-          "$NINJA_PATH" --version
-          echo "PASS: ninja is executable"
+          if [ ! -f "$NINJA_PATH/ninja" ]; then
+            echo "FAIL: ninja binary not found in $NINJA_PATH"
+            ls -la "$NINJA_PATH" || true
+            exit 1
+          fi
+          "$NINJA_PATH/ninja" --version
+          echo "PASS: ninja binary found and functional in ninja-path directory"
