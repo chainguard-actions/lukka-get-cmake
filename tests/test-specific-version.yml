@@ -1,4 +1,4 @@
-name: Test basic usage - latest cmake and ninja
+name: Test specific cmake and ninja versions
 on:
   workflow_dispatch:
 jobs:
@@ -16,6 +16,8 @@ jobs:
       - id: get-cmake
         uses: .
         with:
+          cmakeVersion: '3.25.2'
+          ninjaVersion: '1.11.1'
           useCloudCache: false
           useLocalCache: false
       - name: Assert cmake-path output is set
@@ -27,24 +29,22 @@ jobs:
             echo "FAIL: cmake-path output is empty"
             exit 1
           fi
-          echo "PASS: cmake-path is set to $CMAKE_PATH"
-      - name: Assert ninja-path output is set
-        env:
-          NINJA_PATH: ${{ steps.get-cmake.outputs.ninja-path }}
+          echo "PASS: cmake-path is set"
+      - name: Assert cmake version is correct
         run: |
-          echo "ninja-path: $NINJA_PATH"
-          if [ -z "$NINJA_PATH" ]; then
-            echo "FAIL: ninja-path output is empty"
+          VERSION_OUTPUT=$(cmake --version)
+          echo "cmake version output: $VERSION_OUTPUT"
+          if ! echo "$VERSION_OUTPUT" | grep -q "3.25.2"; then
+            echo "FAIL: expected cmake version 3.25.2 but got: $VERSION_OUTPUT"
             exit 1
           fi
-          echo "PASS: ninja-path is set to $NINJA_PATH"
-      - name: Assert cmake executable works
+          echo "PASS: cmake version is 3.25.2"
+      - name: Assert ninja version is correct
         run: |
-          echo "Testing cmake from PATH"
-          cmake --version
-          echo "PASS: cmake executable works"
-      - name: Assert ninja executable works
-        run: |
-          echo "Testing ninja from PATH"
-          ninja --version
-          echo "PASS: ninja executable works"
+          VERSION_OUTPUT=$(ninja --version)
+          echo "ninja version output: $VERSION_OUTPUT"
+          if ! echo "$VERSION_OUTPUT" | grep -q "1.11.1"; then
+            echo "FAIL: expected ninja version 1.11.1 but got: $VERSION_OUTPUT"
+            exit 1
+          fi
+          echo "PASS: ninja version is 1.11.1"
