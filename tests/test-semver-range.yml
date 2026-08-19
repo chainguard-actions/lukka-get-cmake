@@ -1,4 +1,4 @@
-name: Test basic usage - install latest cmake and ninja
+name: Test semver range version syntax
 on:
   workflow_dispatch:
 jobs:
@@ -9,8 +9,8 @@ jobs:
       - id: get-cmake
         uses: .
         with:
-          cmakeVersion: latest
-          ninjaVersion: latest
+          cmakeVersion: "~3.25.0"
+          ninjaVersion: "~1.11.0"
           useCloudCache: false
           useLocalCache: false
       - name: Assert cmake-path output is set
@@ -22,7 +22,7 @@ jobs:
             echo "FAIL: cmake-path output is empty"
             exit 1
           fi
-          echo "PASS: cmake-path is set to $CMAKE_PATH"
+          echo "PASS: cmake-path is set"
       - name: Assert ninja-path output is set
         env:
           NINJA_PATH: ${{ steps.get-cmake.outputs.ninja-path }}
@@ -32,49 +32,33 @@ jobs:
             echo "FAIL: ninja-path output is empty"
             exit 1
           fi
-          echo "PASS: ninja-path is set to $NINJA_PATH"
-      - name: Assert cmake directory exists and cmake binary works
+          echo "PASS: ninja-path is set"
+      - name: Assert cmake version is in 3.25.x range
         env:
           CMAKE_PATH: ${{ steps.get-cmake.outputs.cmake-path }}
         run: |
-          echo "Testing cmake dir at: $CMAKE_PATH"
-          if [ ! -d "$CMAKE_PATH" ]; then
-            echo "FAIL: cmake path directory not found at $CMAKE_PATH"
-            exit 1
-          fi
+          echo "cmake-path dir: $CMAKE_PATH"
           CMAKE_BIN="$CMAKE_PATH/cmake"
-          if [ ! -f "$CMAKE_BIN" ]; then
-            echo "FAIL: cmake binary not found at $CMAKE_BIN"
-            ls -la "$CMAKE_PATH" || true
+          VERSION_OUTPUT=$("$CMAKE_BIN" --version 2>&1 | head -1)
+          echo "cmake version output: $VERSION_OUTPUT"
+          if ! echo "$VERSION_OUTPUT" | grep -qE "3\.25\.[0-9]+"; then
+            echo "FAIL: expected cmake version in 3.25.x range, got: $VERSION_OUTPUT"
             exit 1
           fi
-          if [ ! -x "$CMAKE_BIN" ]; then
-            echo "FAIL: cmake binary is not executable"
-            exit 1
-          fi
-          "$CMAKE_BIN" --version
-          echo "PASS: cmake binary works"
-      - name: Assert ninja directory exists and ninja binary works
+          echo "PASS: cmake version is in 3.25.x range"
+      - name: Assert ninja version is in 1.11.x range
         env:
           NINJA_PATH: ${{ steps.get-cmake.outputs.ninja-path }}
         run: |
-          echo "Testing ninja dir at: $NINJA_PATH"
-          if [ ! -d "$NINJA_PATH" ]; then
-            echo "FAIL: ninja path directory not found at $NINJA_PATH"
-            exit 1
-          fi
+          echo "ninja-path dir: $NINJA_PATH"
           NINJA_BIN="$NINJA_PATH/ninja"
-          if [ ! -f "$NINJA_BIN" ]; then
-            echo "FAIL: ninja binary not found at $NINJA_BIN"
-            ls -la "$NINJA_PATH" || true
+          VERSION_OUTPUT=$("$NINJA_BIN" --version 2>&1)
+          echo "ninja version output: $VERSION_OUTPUT"
+          if ! echo "$VERSION_OUTPUT" | grep -qE "1\.11\.[0-9]+"; then
+            echo "FAIL: expected ninja version in 1.11.x range, got: $VERSION_OUTPUT"
             exit 1
           fi
-          if [ ! -x "$NINJA_BIN" ]; then
-            echo "FAIL: ninja binary is not executable"
-            exit 1
-          fi
-          "$NINJA_BIN" --version
-          echo "PASS: ninja binary works"
+          echo "PASS: ninja version is in 1.11.x range"
       - name: Assert cmake is on PATH
         run: |
           which cmake || (echo "FAIL: cmake not found on PATH" && exit 1)
