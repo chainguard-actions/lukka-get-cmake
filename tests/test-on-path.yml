@@ -1,0 +1,63 @@
+name: Test cmake and ninja are available on PATH
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: get-cmake
+        uses: .
+        with:
+          cmakeVersion: 'latest'
+          ninjaVersion: 'latest'
+          useCloudCache: false
+          useLocalCache: false
+      - name: Assert cmake is on PATH
+        run: |
+          echo "Checking cmake on PATH..."
+          if ! command -v cmake >/dev/null 2>&1; then
+            echo "FAIL: cmake not found on PATH"
+            exit 1
+          fi
+          CMAKE_VERSION=$(cmake --version)
+          echo "cmake version: $CMAKE_VERSION"
+          echo "PASS: cmake is on PATH"
+      - name: Assert ninja is on PATH
+        run: |
+          echo "Checking ninja on PATH..."
+          if ! command -v ninja >/dev/null 2>&1; then
+            echo "FAIL: ninja not found on PATH"
+            exit 1
+          fi
+          NINJA_VERSION=$(ninja --version)
+          echo "ninja version: $NINJA_VERSION"
+          echo "PASS: ninja is on PATH"
+      - name: Assert cmake-path output is set and is a directory
+        env:
+          CMAKE_PATH: ${{ steps.get-cmake.outputs.cmake-path }}
+        run: |
+          echo "cmake-path output: $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path output is empty"
+            exit 1
+          fi
+          if [ ! -d "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path is not a directory: $CMAKE_PATH"
+            exit 1
+          fi
+          echo "PASS: cmake-path is set and is a directory"
+      - name: Assert ninja-path output is set and is a directory
+        env:
+          NINJA_PATH: ${{ steps.get-cmake.outputs.ninja-path }}
+        run: |
+          echo "ninja-path output: $NINJA_PATH"
+          if [ -z "$NINJA_PATH" ]; then
+            echo "FAIL: ninja-path output is empty"
+            exit 1
+          fi
+          if [ ! -d "$NINJA_PATH" ]; then
+            echo "FAIL: ninja-path is not a directory: $NINJA_PATH"
+            exit 1
+          fi
+          echo "PASS: ninja-path is set and is a directory"

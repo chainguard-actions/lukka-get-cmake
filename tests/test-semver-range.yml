@@ -1,4 +1,4 @@
-name: Test basic usage (latest cmake and ninja)
+name: Test semver range version syntax
 on:
   workflow_dispatch:
 jobs:
@@ -9,6 +9,8 @@ jobs:
       - id: get-cmake
         uses: .
         with:
+          cmakeVersion: '~3.27.0'
+          ninjaVersion: '~1.11.0'
           useCloudCache: false
           useLocalCache: false
       - name: Assert cmake-path output is set
@@ -31,21 +33,23 @@ jobs:
             exit 1
           fi
           echo "PASS: ninja-path is set"
-      - name: Assert cmake executable works
+      - name: Assert cmake version is in 3.27.x range
         run: |
-          echo "Testing cmake on PATH..."
-          if ! command -v cmake >/dev/null 2>&1; then
-            echo "FAIL: cmake not found on PATH"
+          echo "Testing cmake version..."
+          VERSION_OUTPUT=$(cmake --version)
+          echo "cmake version output: $VERSION_OUTPUT"
+          if ! echo "$VERSION_OUTPUT" | grep -qE "3\.27\.[0-9]+"; then
+            echo "FAIL: expected cmake version in 3.27.x range but got: $VERSION_OUTPUT"
             exit 1
           fi
-          cmake --version
-          echo "PASS: cmake executable works"
-      - name: Assert ninja executable works
+          echo "PASS: cmake version is in 3.27.x range"
+      - name: Assert ninja version is in 1.11.x range
         run: |
-          echo "Testing ninja on PATH..."
-          if ! command -v ninja >/dev/null 2>&1; then
-            echo "FAIL: ninja not found on PATH"
+          echo "Testing ninja version..."
+          VERSION_OUTPUT=$(ninja --version)
+          echo "ninja version output: $VERSION_OUTPUT"
+          if ! echo "$VERSION_OUTPUT" | grep -qE "1\.11\.[0-9]+"; then
+            echo "FAIL: expected ninja version in 1.11.x range but got: $VERSION_OUTPUT"
             exit 1
           fi
-          ninja --version
-          echo "PASS: ninja executable works"
+          echo "PASS: ninja version is in 1.11.x range"
