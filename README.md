@@ -6,15 +6,16 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 ## Versions
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| v4.2.3 | [`v4.2.3`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.2.3) | [`f176ccd`](https://github.com/lukka/get-cmake/commit/f176ccd3f28bda569c43aae4894f06b2435a3375) |
-| v4.3.0 | [`v4.3.0`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.0) | [`b783061`](https://github.com/lukka/get-cmake/commit/b78306120111dc2522750771cfd09ee7ca723687) |
-| v4.3.1 | [`v4.3.1`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.1) | [`ea83089`](https://github.com/lukka/get-cmake/commit/ea83089aa35e08e459464341fe24ad024ee2466f) |
-| v4.3.2 | [`v4.3.2`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.2) | [`7bfc9ba`](https://github.com/lukka/get-cmake/commit/7bfc9baacbbdcb5e37957ad05c3546b3e222be3c) |
-| v4.3.3 | [`v4.3.3`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.3) | [`591817e`](https://github.com/lukka/get-cmake/commit/591817e96fcad43505fb4eae36172462abb3a42e) |
-| v4.4.0 | [`v4.4.0`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.4.0) | [`e690607`](https://github.com/lukka/get-cmake/commit/e6906078ebd1ccb8ce51ab4626ac46a1b5a517e3) |
-| v4.4.2 | [`v4.4.2`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.4.2) | [`fffaaaf`](https://github.com/lukka/get-cmake/commit/fffaaafeea488556c2c12dad60690008bc1caacb) |
+| Version | Tag | Upstream commit | Hardening report |
+|---------|-----|-----------------|------------------|
+| v4.2.3 | [`v4.2.3`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.2.3) | [`f176ccd`](https://github.com/lukka/get-cmake/commit/f176ccd3f28bda569c43aae4894f06b2435a3375) | [`HARDENING.md`](https://github.com/chainguard-actions/lukka-get-cmake/blob/v4.2.3/HARDENING.md) |
+| v4.3.0 | [`v4.3.0`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.0) | [`b783061`](https://github.com/lukka/get-cmake/commit/b78306120111dc2522750771cfd09ee7ca723687) | [`HARDENING.md`](https://github.com/chainguard-actions/lukka-get-cmake/blob/v4.3.0/HARDENING.md) |
+| v4.3.1 | [`v4.3.1`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.1) | [`ea83089`](https://github.com/lukka/get-cmake/commit/ea83089aa35e08e459464341fe24ad024ee2466f) | [`HARDENING.md`](https://github.com/chainguard-actions/lukka-get-cmake/blob/v4.3.1/HARDENING.md) |
+| v4.3.2 | [`v4.3.2`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.2) | [`7bfc9ba`](https://github.com/lukka/get-cmake/commit/7bfc9baacbbdcb5e37957ad05c3546b3e222be3c) | [`HARDENING.md`](https://github.com/chainguard-actions/lukka-get-cmake/blob/v4.3.2/HARDENING.md) |
+| v4.3.3 | [`v4.3.3`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.3.3) | [`591817e`](https://github.com/lukka/get-cmake/commit/591817e96fcad43505fb4eae36172462abb3a42e) | [`HARDENING.md`](https://github.com/chainguard-actions/lukka-get-cmake/blob/v4.3.3/HARDENING.md) |
+| v4.4.0 | [`v4.4.0`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.4.0) | [`e690607`](https://github.com/lukka/get-cmake/commit/e6906078ebd1ccb8ce51ab4626ac46a1b5a517e3) | [`HARDENING.md`](https://github.com/chainguard-actions/lukka-get-cmake/blob/v4.4.0/HARDENING.md) |
+| v4.4.2 | [`v4.4.2`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.4.2) | [`fffaaaf`](https://github.com/lukka/get-cmake/commit/fffaaafeea488556c2c12dad60690008bc1caacb) | [`HARDENING.md`](https://github.com/chainguard-actions/lukka-get-cmake/blob/v4.4.2/HARDENING.md) |
+| v4.4.5 | [`v4.4.5`](https://github.com/chainguard-actions/lukka-get-cmake/tree/v4.4.5) | [`f86dd60`](https://github.com/lukka/get-cmake/commit/f86dd60acae0d132056913e248bdabf0e0580b7a) | [`HARDENING.md`](https://github.com/chainguard-actions/lukka-get-cmake/blob/v4.4.5/HARDENING.md) |
 
 ## Privacy
 
