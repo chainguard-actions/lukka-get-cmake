@@ -1,0 +1,48 @@
+name: Test local cache only
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: 3.27.9
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert cmake installed from local-cache flow
+        env:
+          CMAKE_PATH: ${{ steps.action.outputs.cmake-path }}
+        run: |
+          echo "cmake-path: $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ] || [ ! -e "$CMAKE_PATH" ]; then
+            echo "FAIL: cmake-path missing"
+            exit 1
+          fi
+          CV="$(cmake --version | head -n1)"
+          echo "cmake: $CV"
+          if ! echo "$CV" | grep -q "3\.27\.9"; then
+            echo "FAIL: expected cmake 3.27.9"
+            exit 1
+          fi
+          echo "PASS"
+      - id: action2
+        name: Run again (should hit local tool cache)
+        uses: .
+        with:
+          cmakeVersion: 3.27.9
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert second run works
+        env:
+          CMAKE_PATH: ${{ steps.action2.outputs.cmake-path }}
+        run: |
+          echo "cmake-path: $CMAKE_PATH"
+          if [ -z "$CMAKE_PATH" ]; then
+            echo "FAIL: empty cmake-path on second run"
+            exit 1
+          fi
+          cmake --version | head -n1 | grep -q "3\.27\.9" || { echo "FAIL: wrong version"; exit 1; }
+          echo "PASS"

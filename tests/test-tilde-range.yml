@@ -1,0 +1,29 @@
+name: Test semver tilde range
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: "~3.28.0"
+          ninjaVersion: "~1.11.0"
+          useCloudCache: false
+      - name: Assert version within range
+        run: |
+          CV="$(cmake --version | head -n1)"
+          NV="$(ninja --version)"
+          echo "cmake: $CV"
+          echo "ninja: $NV"
+          if ! echo "$CV" | grep -qE "cmake version 3\.28\.[0-9]+"; then
+            echo "FAIL: expected cmake 3.28.x"
+            exit 1
+          fi
+          if ! echo "$NV" | grep -qE "^1\.11\.[0-9]+"; then
+            echo "FAIL: expected ninja 1.11.x"
+            exit 1
+          fi
+          echo "PASS"
