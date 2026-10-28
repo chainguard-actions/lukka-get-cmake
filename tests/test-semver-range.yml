@@ -1,0 +1,32 @@
+name: Test semver range version
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: "~3.28.0"
+          ninjaVersion: "~1.11.0"
+          useCloudCache: false
+      - name: Assert cmake version is 3.28.x
+        run: |
+          OUT="$(cmake --version | head -n1)"
+          echo "actual: $OUT"
+          if ! echo "$OUT" | grep -qE '^cmake version 3\.28\.[0-9]+$'; then
+            echo "FAIL: expected cmake 3.28.x"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert ninja version is 1.11.x
+        run: |
+          OUT="$(ninja --version)"
+          echo "actual: $OUT"
+          if ! echo "$OUT" | grep -qE '^1\.11\.[0-9]+$'; then
+            echo "FAIL: expected ninja 1.11.x"
+            exit 1
+          fi
+          echo "PASS"

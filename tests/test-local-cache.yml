@@ -1,0 +1,30 @@
+name: Test local cache
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: first
+        uses: .
+        with:
+          cmakeVersion: 3.26.4
+          useCloudCache: false
+          useLocalCache: true
+      - id: second
+        uses: .
+        with:
+          cmakeVersion: 3.26.4
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert cmake version
+        run: |
+          OUT="$(cmake --version | head -n1)"
+          echo "actual: $OUT"
+          if [ "$OUT" != "cmake version 3.26.4" ]; then
+            echo "FAIL: expected 'cmake version 3.26.4'"
+            exit 1
+          fi
+          ninja --version || { echo "FAIL: ninja not available"; exit 1; }
+          echo "PASS"

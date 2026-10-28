@@ -1,0 +1,45 @@
+name: Test basic latest install
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          useCloudCache: false
+      - name: Assert cmake and ninja are on PATH
+        run: |
+          which cmake || { echo "FAIL: cmake not on PATH"; exit 1; }
+          which ninja || { echo "FAIL: ninja not on PATH"; exit 1; }
+          cmake --version || { echo "FAIL: cmake --version failed"; exit 1; }
+          ninja --version || { echo "FAIL: ninja --version failed"; exit 1; }
+          echo "PASS"
+      - name: Assert outputs (if set) point to existing paths
+        env:
+          CMAKE_PATH: ${{ steps.action.outputs.cmake-path }}
+          NINJA_PATH: ${{ steps.action.outputs.ninja-path }}
+        run: |
+          echo "cmake-path: $CMAKE_PATH"
+          echo "ninja-path: $NINJA_PATH"
+          for p in "$CMAKE_PATH" "$NINJA_PATH"; do
+            if [ -n "$p" ] && [ ! -e "$p" ]; then
+              echo "FAIL: output path '$p' does not exist"
+              exit 1
+            fi
+          done
+          echo "PASS"
+      - name: Assert cmake can configure and build with ninja
+        run: |
+          mkdir -p /tmp/proj && cd /tmp/proj
+          cat > CMakeLists.txt <<'EOF'
+          cmake_minimum_required(VERSION 3.10)
+          project(hello NONE)
+          add_custom_target(hello ALL COMMAND ${CMAKE_COMMAND} -E echo hello-from-ninja)
+          EOF
+          cmake -G Ninja -S . -B build || { echo "FAIL: configure failed"; exit 1; }
+          cmake --build build | tee out.txt
+          grep -q hello-from-ninja out.txt || { echo "FAIL: build did not run"; exit 1; }
+          echo "PASS"

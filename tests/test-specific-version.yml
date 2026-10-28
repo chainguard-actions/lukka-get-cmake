@@ -1,0 +1,32 @@
+name: Test specific versions
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: 3.25.2
+          ninjaVersion: 1.11.1
+          useCloudCache: false
+      - name: Assert cmake version
+        run: |
+          OUT="$(cmake --version | head -n1)"
+          echo "actual: $OUT"
+          if [ "$OUT" != "cmake version 3.25.2" ]; then
+            echo "FAIL: expected 'cmake version 3.25.2'"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert ninja version
+        run: |
+          OUT="$(ninja --version)"
+          echo "actual: $OUT"
+          if [ "$OUT" != "1.11.1" ]; then
+            echo "FAIL: expected '1.11.1'"
+            exit 1
+          fi
+          echo "PASS"
