@@ -1,0 +1,42 @@
+name: Test local cache only
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: 3.26.4
+          ninjaVersion: 1.11.1
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert installed via local cache
+        run: |
+          CV="$(cmake --version | head -n1)"
+          NV="$(ninja --version)"
+          echo "cmake: $CV"
+          echo "ninja: $NV"
+          case "$CV" in
+            *"3.26.4"*) ;;
+            *) echo "FAIL: expected cmake 3.26.4"; exit 1 ;;
+          esac
+          if [ "$NV" != "1.11.1" ]; then
+            echo "FAIL: expected ninja 1.11.1"
+            exit 1
+          fi
+          echo "PASS"
+      - id: second
+        name: Run again (should hit local cache)
+        uses: .
+        with:
+          cmakeVersion: 3.26.4
+          ninjaVersion: 1.11.1
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert still correct after second run
+        run: |
+          cmake --version | head -n1 | grep -q "3.26.4" || { echo "FAIL: cmake version wrong"; exit 1; }
+          echo "PASS"

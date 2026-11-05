@@ -1,0 +1,30 @@
+name: Test basic latest install
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          useCloudCache: false
+      - name: Assert cmake and ninja available
+        env:
+          CMAKE_OUT: ${{ steps.action.outputs.cmake-path }}
+          NINJA_OUT: ${{ steps.action.outputs.ninja-path }}
+        run: |
+          echo "cmake-path output: $CMAKE_OUT"
+          echo "ninja-path output: $NINJA_OUT"
+          echo "which cmake: $(command -v cmake)"
+          echo "which ninja: $(command -v ninja)"
+          cmake --version || { echo "FAIL: cmake not runnable"; exit 1; }
+          ninja --version || { echo "FAIL: ninja not runnable"; exit 1; }
+          for p in "$CMAKE_OUT" "$NINJA_OUT"; do
+            if [ -n "$p" ] && [ ! -e "$p" ]; then
+              echo "FAIL: output path '$p' does not exist"
+              exit 1
+            fi
+          done
+          echo "PASS"

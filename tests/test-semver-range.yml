@@ -1,0 +1,23 @@
+name: Test semver range version
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: "~3.28.0"
+          useCloudCache: false
+      - name: Assert cmake 3.28.x installed
+        run: |
+          CV="$(cmake --version | head -n1)"
+          echo "cmake: $CV"
+          if ! echo "$CV" | grep -qE 'version 3\.28\.[0-9]+'; then
+            echo "FAIL: expected cmake 3.28.x"
+            exit 1
+          fi
+          ninja --version || { echo "FAIL: ninja not runnable"; exit 1; }
+          echo "PASS"

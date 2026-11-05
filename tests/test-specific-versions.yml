@@ -1,0 +1,40 @@
+name: Test specific versions
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          cmakeVersion: 3.25.2
+          ninjaVersion: 1.11.1
+          useCloudCache: false
+      - name: Assert exact versions installed
+        env:
+          CMAKE_OUT: ${{ steps.action.outputs.cmake-path }}
+          NINJA_OUT: ${{ steps.action.outputs.ninja-path }}
+        run: |
+          echo "cmake-path output: $CMAKE_OUT"
+          echo "ninja-path output: $NINJA_OUT"
+          CV="$(cmake --version | head -n1)"
+          NV="$(ninja --version)"
+          echo "cmake: $CV"
+          echo "ninja: $NV"
+          case "$CV" in
+            *"3.25.2"*) ;;
+            *) echo "FAIL: expected cmake 3.25.2"; exit 1 ;;
+          esac
+          if [ "$NV" != "1.11.1" ]; then
+            echo "FAIL: expected ninja 1.11.1"
+            exit 1
+          fi
+          for p in "$CMAKE_OUT" "$NINJA_OUT"; do
+            if [ -n "$p" ] && [ ! -e "$p" ]; then
+              echo "FAIL: output path '$p' does not exist"
+              exit 1
+            fi
+          done
+          echo "PASS"
