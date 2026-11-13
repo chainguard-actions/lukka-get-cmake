@@ -1,0 +1,36 @@
+name: Test local cache usage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: first
+        uses: .
+        with:
+          cmakeVersion: "3.27.9"
+          ninjaVersion: "1.11.1"
+          useCloudCache: false
+          useLocalCache: true
+      - id: second
+        uses: .
+        with:
+          cmakeVersion: "3.27.9"
+          ninjaVersion: "1.11.1"
+          useCloudCache: false
+          useLocalCache: true
+      - name: Assert versions and outputs
+        env:
+          CMAKE1: ${{ steps.first.outputs.cmake-path }}
+          CMAKE2: ${{ steps.second.outputs.cmake-path }}
+        run: |
+          echo "first: $CMAKE1"
+          echo "second: $CMAKE2"
+          cmake --version | grep -q "3.27.9" || { echo "FAIL: wrong cmake"; exit 1; }
+          [ "$(ninja --version)" = "1.11.1" ] || { echo "FAIL: wrong ninja"; exit 1; }
+          if [ -z "$CMAKE1" ] || [ -z "$CMAKE2" ]; then
+            echo "FAIL: empty cmake-path output"
+            exit 1
+          fi
+          echo "PASS"
