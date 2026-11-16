@@ -4,8 +4,13 @@
   "version": "v4.5.0-rc3",
   "commit_sha": "30aea713799f46b5b60e60f5fa83f849abd52c22",
   "url": "https://github.com/lukka/get-cmake",
-  "policy_sha": "d636be7e43ef829af6e853da6b3c7566db9f72fe",
+  "policy_sha": "374911c4be584df24e6da57af2d990570ef0f859",
   "test_policy_sha": "843adf9e4b8f85d0c08b27b9d0b09dd094b54702",
   "test_agent_version": "2",
-  "harden_agent_version": "2"
+  "harden_agent_version": "2",
+  "dist_artifact": {
+    "gcs_uri": "gs://patch-actions-node-artifacts/dist-artifacts/lukka/get-cmake/v4.5.0-rc3/sha256-c1ad8964c1fe0461277995489f337c0e3097f5dbe288237ebd37585425cee556.tar.gz",
+    "sha256": "c1ad8964c1fe0461277995489f337c0e3097f5dbe288237ebd37585425cee556",
+    "size_bytes": 741464
+  }
 }
