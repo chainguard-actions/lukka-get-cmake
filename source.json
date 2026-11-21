@@ -1,6 +1,16 @@
 {
   "owner": "lukka",
   "repo": "get-cmake",
-  "version": "",
-  "url": "https://github.com/lukka/get-cmake"
+  "version": "v4.5.1",
+  "commit_sha": "a1a8216777d3cbbf5602c73b9ddd3e98257ecdc4",
+  "url": "https://github.com/lukka/get-cmake",
+  "policy_sha": "374911c4be584df24e6da57af2d990570ef0f859",
+  "test_policy_sha": "843adf9e4b8f85d0c08b27b9d0b09dd094b54702",
+  "test_agent_version": "2",
+  "harden_agent_version": "2",
+  "dist_artifact": {
+    "gcs_uri": "gs://patch-actions-node-artifacts/dist-artifacts/lukka/get-cmake/v4.5.1/sha256-0fb7e9e56279e6479eb7bed088124e7ae9693e8c7417ba76634ed23781560cda.tar.gz",
+    "sha256": "0fb7e9e56279e6479eb7bed088124e7ae9693e8c7417ba76634ed23781560cda",
+    "size_bytes": 741857
+  }
 }
